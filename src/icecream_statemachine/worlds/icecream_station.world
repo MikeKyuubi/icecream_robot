@@ -1,0 +1,281 @@
+<?xml version="1.0" ?>
+<!--
+  Ice Cream Station World
+  =======================
+  Layout (top-down, robot at origin facing +X):
+
+       [Cup Dispenser]       [Ice Cream Machine]
+        x=0.0, y=0.35         x=0.35, y=0.0
+              \                     |
+               \                    |
+            [myCobot 450] ---------> [Serving Tray]
+               0,0,0                x=0.0, y=-0.35
+
+  All objects placed within 450mm reach of the robot base.
+  Heights designed so the robot end-effector can reach them.
+-->
+<sdf version="1.7">
+  <world name="default">
+
+    <!-- Physics -->
+    <plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics"/>
+
+    <!-- User commands -->
+    <plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands"/>
+
+    <!-- Scene broadcaster -->
+    <plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster"/>
+
+    <!-- Sensors -->
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <gravity>0.0 0.0 -9.8</gravity>
+
+    <!-- ── Lighting ──────────────────────────────────────────────────────── -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- ── Ground plane ──────────────────────────────────────────────────── -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>10 10</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>10 10</size></plane></geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Workbench (table the robot sits on) ───────────────────────────── -->
+    <model name="workbench">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>1.2 1.2 0.05</size></box>
+          </geometry>
+          <pose>0 0 -0.025 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 -0.025 0 0 0</pose>
+          <geometry>
+            <box><size>1.2 1.2 0.05</size></box>
+          </geometry>
+          <material>
+            <ambient>0.6 0.4 0.2 1</ambient>
+            <diffuse>0.6 0.4 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Cup Dispenser ─────────────────────────────────────────────────── -->
+    <!-- Position: left side of robot (y=+0.32), within reach -->
+    <!-- A tall cylinder representing the cup stack dispenser -->
+    <model name="cup_dispenser">
+      <static>true</static>
+      <pose>0.0 0.32 0 0 0 0</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <cylinder><radius>0.04</radius><length>0.20</length></cylinder>
+          </geometry>
+          <pose>0 0 0.10 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 0.10 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.04</radius><length>0.20</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.4 0.8 1</ambient>
+            <diffuse>0.2 0.4 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+      <!-- Cup slot indicator (small disc on top) -->
+      <link name="slot">
+        <pose>0 0 0.21 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <cylinder><radius>0.045</radius><length>0.01</length></cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder><radius>0.045</radius><length>0.01</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.1 0.2 0.6 1</ambient>
+            <diffuse>0.1 0.2 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+      <joint name="fixed" type="fixed">
+        <parent>body</parent>
+        <child>slot</child>
+      </joint>
+    </model>
+
+    <!-- Cup (sitting on top of dispenser, robot will grab this) -->
+    <model name="cup">
+      <pose>0.0 0.32 0.225 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder><radius>0.025</radius><length>0.08</length></cylinder>
+          </geometry>
+          <pose>0 0 0.04 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 0.04 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.025</radius><length>0.08</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>1.0 1.0 1.0 1</ambient>
+            <diffuse>1.0 1.0 1.0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz>
+            <iyy>0.0001</iyy><iyz>0</iyz>
+            <izz>0.0001</izz>
+          </inertia>
+        </inertial>
+      </link>
+    </model>
+
+    <!-- ── Ice Cream Machine ─────────────────────────────────────────────── -->
+    <!-- Position: front-right of robot (x=+0.32), within reach -->
+    <model name="icecream_machine">
+      <static>true</static>
+      <pose>1.2258 -0.3474 0.1665 3.1367 0.0 -3.1362</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <mesh>
+              <uri>package://mycobot_description/meshes/icecream_station/icecream_machine.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <pose>0 0 0.15 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 0.15 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>package://mycobot_description/meshes/icecream_station/icecream_machine.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+      <!-- Nozzle (where ice cream comes out) -->
+      <link name="nozzle">
+        <pose>0 0 0.305 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <cylinder><radius>0.015</radius><length>0.04</length></cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder><radius>0.015</radius><length>0.04</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+      </link>
+      <joint name="fixed" type="fixed">
+        <parent>body</parent>
+        <child>nozzle</child>
+      </joint>
+    </model>
+
+    <!-- ── Serving Tray ───────────────────────────────────────────────────── -->
+    <!-- Position: front of robot (y=-0.32), where customer picks up -->
+    <model name="serving_tray">
+      <static>true</static>
+      <pose>0.0 -0.32 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.20 0.20 0.02</size></box>
+          </geometry>
+          <pose>0 0 0.01 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <pose>0 0 0.01 0 0 0</pose>
+          <geometry>
+            <box><size>0.20 0.20 0.02</size></box>
+          </geometry>
+          <material>
+            <ambient>0.9 0.8 0.1 1</ambient>
+            <diffuse>0.9 0.8 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Labels (colored markers so you can identify objects) ──────────── -->
+    <!-- Blue sphere = cup dispenser marker -->
+    <model name="marker_dispenser">
+      <static>true</static>
+      <pose>0.0 0.32 0.30 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><sphere><radius>0.02</radius></sphere></geometry>
+          <material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Red sphere = ice cream machine marker -->
+    <model name="marker_icecream">
+      <static>true</static>
+      <pose>0.32 0.0 0.36 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><sphere><radius>0.02</radius></sphere></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Green sphere = serving tray marker -->
+    <model name="marker_serving">
+      <static>true</static>
+      <pose>0.0 -0.32 0.06 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><sphere><radius>0.02</radius></sphere></geometry>
+          <material><ambient>0 1 0 1</ambient><diffuse>0 1 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

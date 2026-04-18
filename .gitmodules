@@ -1,0 +1,9 @@
+[submodule "src/gz_ros2_control"]
+	path = src/gz_ros2_control
+	url = https://github.com/ros-controls/gz_ros2_control.git
+[submodule "src/mycobot_ros2"]
+	path = src/mycobot_ros2
+	url = https://github.com/automaticaddison/mycobot_ros2.git
+[submodule "src/mycobot_ros2_humble"]
+	path = src/mycobot_ros2_humble
+	url = https://github.com/elephantrobotics/mycobot_ros2.git
