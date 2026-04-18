@@ -1,5 +1,5 @@
 # ── Base: NVIDIA L4T ROS2 Humble for JetPack 6.x (aarch64) ──────────────────
-FROM dustynv/ros:humble-ros-base-l4t-r36.4.0
+FROM dustynv/ros:humble-ros-base-l4t-r36.2.0
 
 # ── Environment ───────────────────────────────────────────────────────────────
 ENV DEBIAN_FRONTEND=noninteractive
