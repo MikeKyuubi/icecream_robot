@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  icecream_robot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: icecream_robot:latest
+    container_name: icecream_robot
+
+    # ── Hardware access ───────────────────────────────────────────────
+    privileged: true
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0   # myCobot USB serial
+      - /dev/ttyACM0:/dev/ttyACM0   # alternative port
+
+    # ── Display (Qt dashboard) ────────────────────────────────────────
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_QPA_PLATFORM=xcb
+      - ROS_DOMAIN_ID=0
+      - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev:/dev
+
+    # ── Network ───────────────────────────────────────────────────────
+    network_mode: host
+
+    # ── Restart policy ────────────────────────────────────────────────
+    restart: unless-stopped
+
+    command: >
+      bash -c "
+        ros2 launch icecream_statemachine icecream_robot.launch.py
+      "
